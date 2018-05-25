@@ -36,14 +36,14 @@ final class ChatViewController: JSQMessagesViewController {
     lazy var incomingBubbleImageView: JSQMessagesBubbleImage = self.setupIncomingBubble()
     
     private lazy var messageRef: DatabaseReference = self.channelRef!.child("messages")
+    private var newMessageRefHandle: DatabaseHandle?
+
+    
     private lazy var userIsTypingRef: DatabaseReference = self.channelRef!.child("typingIndicator").child(self.senderId)
     private lazy var usersTypingQuery: DatabaseQuery = self.channelRef!.child("typingIndicator").queryOrderedByValue().queryEqual(toValue: true)
     
-    
-    private var newMessageRefHandle: DatabaseHandle?
     private var localTyping = false
 
-    
     // MARK: View Lifecycle
     
     override func viewDidLoad() {
@@ -61,11 +61,6 @@ final class ChatViewController: JSQMessagesViewController {
         
         observeTyping()
         
-        //addMessage(withId: "foo", name: "Mr.Bolt", text: "I am so fast!")
-        //addMessage(withId: senderId, name: "Me", text: "I bet I can run faster than you!")
-        //addMessage(withId: senderId, name: "Me", text: "I like to run!")
-        
-        //finishReceivingMessage()
     }
     
     // MARK: Collection view data source (and related) methods
@@ -104,18 +99,21 @@ final class ChatViewController: JSQMessagesViewController {
         return nil
     }
     
-    
-    
-    // MARK: Firebase related methods
-    
     private func addMessage(withId id: String, name: String, text: String) {
         if let message = JSQMessage(senderId: id, displayName: name, text: text) {
             messages.append(message)
         }
     }
     
+    override func didPressAccessoryButton(_ sender: UIButton!) {
+        print("You pressed Accessory Button")
+    }
+    
+    // MARK: Firebase related methods
+    
     private func observeMessages() {
         messageRef = channelRef!.child("messages")
+        
         
         let messageQuery = messageRef.queryLimited(toLast: 25)
         
@@ -181,12 +179,20 @@ final class ChatViewController: JSQMessagesViewController {
     
     // MARK: IBAction
     
-    @IBAction func videoCallButtonPressed(_ sender: Any) {
+    @IBAction func voiceChatButtonPressed(_ sender: Any) {
         
-        self.performSegue(withIdentifier: "ShowVideoChat", sender: self)
-
+        self.performSegue(withIdentifier: "ShowVoiceChat", sender: self)
         
     }
+    
+    @IBAction func videoChatButtonPressed(_ sender: Any) {
+        
+        self.performSegue(withIdentifier: "ShowVideoChat", sender: self)
+        
+    }
+    
+    
+    
     // MARK: UITextViewDelegate methods
     
     override func textViewDidChange(_ textView: UITextView) {
@@ -195,6 +201,16 @@ final class ChatViewController: JSQMessagesViewController {
         isTyping = textView.text != ""
         
         print(textView.text != "")
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "ShowVoiceChat" {
+            let speechVc = segue.destination as! SpeechToTextViewController
+            
+            speechVc.senderId = self.senderId
+            speechVc.channel = channel
+            speechVc.channelRef = channelRef
+        }
     }
     
 }

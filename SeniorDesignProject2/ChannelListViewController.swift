@@ -29,16 +29,6 @@ class ChannelListViewController : UITableViewController {
         observeChannels()
     }
     
-    /*override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
-        channels.append(Channel(id: "1", name: "Channel 1"))
-        channels.append(Channel(id: "2", name: "Channel 2"))
-        channels.append(Channel(id: "3", name: "Channel 3"))
-        self.tableView.reloadData()
-
-    }*/
-    
     // MARK: UITableViewDataSource
     
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -75,6 +65,8 @@ class ChannelListViewController : UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == Section.currentChannelsSection.rawValue {
             let channel = channels[(indexPath as NSIndexPath).row]
+            print(channel.id)
+            print(channel.name)
             self.performSegue(withIdentifier: "ShowChannel", sender: channel)
         }
     }
@@ -83,14 +75,22 @@ class ChannelListViewController : UITableViewController {
     
     @IBAction func createChannelButtonPressed(_ sender: Any) {
         
-        if let name = newChannelTextField?.text {
+        if  newChannelTextField?.text == nil || newChannelTextField?.text == "" {
+            let name = newChannelTextField!.text
             let newChannelRef = channelRef.childByAutoId()
             let channelItem = [
                 "name": name
             ]
             newChannelRef.setValue(channelItem)
+        } else {
+            let alertController = UIAlertController(title: "Error", message: "Please enter a channel name", preferredStyle: .alert)
+            
+            let defaultAction = UIAlertAction(title:"OK", style: .cancel, handler: nil)
+            
+            alertController.addAction(defaultAction)
+            
+            present(alertController, animated: true, completion: nil)
         }
-        
     }
     
     // MARK: Navigation
@@ -124,5 +124,4 @@ class ChannelListViewController : UITableViewController {
             
         })
     }
-    
 }

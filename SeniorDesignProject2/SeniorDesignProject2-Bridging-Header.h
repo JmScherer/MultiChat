@@ -3,6 +3,9 @@
 //
 
 #import <Foundation/Foundation.h>
+/*
+#import <googleapis/CloudSpeech.pbobjc.h>
+#import <googleapis/CloudSpeech.pbrpc.h>
 #import "ARDAppClient.h"
 #import "ARDMessageResponse.h"
 #import "ARDRegisterResponse.h"
@@ -14,3 +17,5 @@
 #import <WebRTC/RTCPeerConnection.h>
 #import <WebRTC/RTCEAGLVideoView.h>
 #import <WebRTC/RTCVideoTrack.h>
+*/
+
